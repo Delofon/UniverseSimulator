@@ -83,7 +83,7 @@ namespace UniverseSimulator.UniverseSimulatorStuff
         {
             gradient.AddKeyColour(0f, Color.Black);
             gradient.AddKeyColour(0.25f, Color.DarkBlue);
-            gradient.AddKeyColour(0.93f, Color.Orange);
+            gradient.AddKeyColour(0.6f, Color.Orange);
             gradient.AddKeyColour(1f, Color.White);
         }
         

@@ -7,13 +7,13 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-texture2D gradient;
-sampler2D grad_sampler = sampler_state{Texture = <gradient>;};
+texture gradient;
+sampler gradient_sampler = sampler_state { Texture = (gradient); Filter = POINT; };
 int width;
 
-float4 PixelShaderFunction(float4 pos : SV_Position, float2 coords : TEXCOORD0) : COLOR0
+float4 PixelShaderFunction(float4 pos : SV_POSITION, float2 coords : TEXCOORD0) : COLOR0
 {
-	float4 gradient_color = tex2D(grad_sampler, coords);
+	float4 gradient_color = tex2D(gradient_sampler, float2(0, 0));
 	return gradient_color;
 }
 

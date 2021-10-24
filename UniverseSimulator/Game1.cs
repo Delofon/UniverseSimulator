@@ -81,11 +81,11 @@ namespace UniverseSimulator
             int fps = (int)Math.Round(1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
             Window.Title = window_title_base + $" FPS: {fps}";
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, transformMatrix: camera.get_transformation(graphics));
-            //simpleShader.Parameters["gradient"].SetValue(gradientText);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: simpleShader, transformMatrix: camera.get_transformation(graphics));
+            simpleShader.Parameters["gradient"].SetValue(gradientText);
             //simpleShader.Parameters["width"].SetValue(gradientText.Width);
             playground.Draw(spriteBatch);
-            spriteBatch.Draw(gradientText, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 20f, SpriteEffects.None, 0);
+            //spriteBatch.Draw(gradientText, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 20f, SpriteEffects.None, 0);
             spriteBatch.End();
 
             base.Draw(gameTime);

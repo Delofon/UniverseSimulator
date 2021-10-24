@@ -20,66 +20,52 @@ namespace UniverseSimulator.UniverseSimulatorStuff
 
         public Color Evaluate(float time, float alpha = 1)
         {
+            // Safe time
             time = Math.Clamp(time, 0f, 1f);
 
+            // If time lands on a key colour, retrieve it
             if(keyColours.ContainsKey(time))
             {
-                //Console.WriteLine(new Color(GetValueFromDictionary(time), Utility_Basic.lerp(0, 255, alpha)));
                 return new Color(GetValueFromDictionary(time), Utility_Basic.lerp(0, 255, alpha));
             }
 
-            else
-            {
-                float leftKey = float.NegativeInfinity;
-                float rightKey = float.PositiveInfinity;
+            // Find previous and next keys
+            float leftKey = float.NegativeInfinity;
+            float rightKey = float.PositiveInfinity;
 
-                foreach(float key in keyColours.Keys)
+            foreach(float key in keyColours.Keys)
+            {
+                if (key < time)
                 {
-                    if (key < time)
+                    if (key > leftKey)
                     {
-                        if (key > leftKey)
-                        {
-                            leftKey = key;
-                        }
-                    }
-                    else
-                    {
-                        if (key < rightKey)
-                        {
-                            rightKey = key;
-                        }
+                        leftKey = key;
                     }
                 }
-
-                Color leftColour = GetValueFromDictionary(leftKey);
-                Color rightColour = GetValueFromDictionary(rightKey);
-
-                //Console.WriteLine(leftColour);
-                //Console.WriteLine(rightColour);
-
-                Vector3 leftInvLerp = (leftColour * Utility_Basic.invLerp(rightKey, leftKey, time)).ToVector3();
-                Vector3 rightInvLerp = (rightColour * Utility_Basic.invLerp(leftKey, rightKey, time)).ToVector3();
-
-                //Console.WriteLine(leftInvLerp);
-                //Console.WriteLine(rightInvLerp);
-                //
-                //Console.WriteLine("----------");
-                //
-                //Console.WriteLine(invLerp(leftKey, rightKey, time));
-                //Console.WriteLine(invLerp(rightKey, leftKey, time));
-
-                Vector3 output = leftInvLerp + rightInvLerp;
-
-                Color outputColour = new Color(output);
-
-                //Console.WriteLine(output);
-                //
-                //Console.WriteLine("======================================");
-
-                //Console.WriteLine(new Color(outputColour.R, outputColour.G, outputColour.B, Utility_Basic.lerp(0, 255, alpha)));
-
-                return new Color(outputColour.R, outputColour.G, outputColour.B, Utility_Basic.lerp(0, 255, alpha));
+                else
+                {
+                    if (key < rightKey)
+                    {
+                        rightKey = key;
+                    }
+                }
             }
+
+            // Get the according colours in normalized values
+            Vector3 leftColour = GetValueFromDictionary(leftKey).ToVector3();
+            Vector3 rightColour = GetValueFromDictionary(rightKey).ToVector3();
+
+            // Lerp
+            Vector3 leftInvLerp  = leftColour  * Utility_Basic.invLerp(rightKey, leftKey, time);
+            Vector3 rightInvLerp = rightColour * Utility_Basic.invLerp(leftKey, rightKey, time);
+
+            // Add resulting values together and that will be your color in normalized values
+            Vector3 output = leftInvLerp + rightInvLerp;
+
+            // Denormalize
+            Color outputColour = new Color(output);
+
+            return new Color(outputColour, Utility_Basic.lerp(0, 255, alpha));
         }
 
         public Texture2D GetTexture(int resolution)
@@ -105,12 +91,9 @@ namespace UniverseSimulator.UniverseSimulatorStuff
             }
         }
 
-        public void RemoveKeyColour(float time)
+        public bool RemoveKeyColour(float time)
         {
-            if(keyColours.ContainsKey(time))
-            {
-                keyColours.Remove(time);
-            }
+            return keyColours.Remove(time);
         }
 
         private Color GetValueFromDictionary(float key)
